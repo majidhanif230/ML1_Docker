@@ -16,7 +16,7 @@ This setup involves automating two tasks on a Windows system using Git Bash and 
    - **Log Directory**: Ensures the directory `/c/bash/task1/log` exists or creates it if necessary.
 
 2. **File Movement**:
-   - Moves all `.log` files from `/c/bash/temp/log` to `/c/bash/old_files`. Errors are suppressed if no `.log` files are found.
+   - Moves all `.log` files from `/c/bash/task1/temp/log` to `/c/bash/task1/old_files`. Errors are suppressed if no `.log` files are found.
 
 3. **Logging**:
    - Records an entry in `/c/bash/task1/log/file_cleanup.log` with a timestamp indicating that files have been moved.
@@ -49,7 +49,7 @@ This setup involves automating two tasks on a Windows system using Git Bash and 
 
 ## Result
 
-- **File Management**: `.log` files are moved to `/c/bash/old_files` and logged in `/c/bash/log/file_cleanup.log`.
+- **File Management**: `.log` files are moved to `/c/bash/task1/old_files` and logged in `/c/bash/task1/log/file_cleanup.log`.
 - **Python Processing**: The line count of `input.txt` is written to `output.txt`.
 - **Automated Execution**: 
   - The shell script runs daily at 1:00 AM.
