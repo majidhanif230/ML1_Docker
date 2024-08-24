@@ -1,4 +1,4 @@
-# File Cleanup and Python Processing
+# Task1: File Cleanup and Python Processing
 
 ## Overview
 
@@ -56,7 +56,7 @@ This setup involves automating two tasks on a Windows system using Git Bash and 
   - The Python script runs daily at 2:00 AM, ensuring both tasks are performed automatically without manual intervention.
 
 
-# Task 2 (Docker Project):
+# Task2: Docker Project:
 
 ## Overview
 
