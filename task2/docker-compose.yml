@@ -1,0 +1,40 @@
+services:
+  backend1:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend1  # Ensure Dockerfile names are correct
+    ports:
+      - "5000:5000"
+    networks:
+      - my_network
+
+  backend2:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend2  # Ensure Dockerfile names are correct
+    ports:
+      - "5001:5001"
+    networks:
+      - my_network
+
+  load_balancer:
+    build:
+      context: .
+      dockerfile: Dockerfile.load_balancer  # Ensure Dockerfile names are correct
+    ports:
+      - "8080:8080"
+    networks:
+      - my_network
+
+  requester:
+    build:
+      context: .
+      dockerfile: Dockerfile.requester  # Ensure Dockerfile names are correct
+    depends_on:
+      - load_balancer
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge

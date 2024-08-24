@@ -1,0 +1,3 @@
+Hello my name is majid hanif.
+I'm currently working as trainee data science.
+i'm currently working on a bash project for MLOps.

@@ -1,0 +1,6 @@
+FROM python:3.8-slim
+WORKDIR /app
+COPY backend2.py .
+RUN pip install Flask
+EXPOSE 5001
+CMD ["python", "backend2.py"]

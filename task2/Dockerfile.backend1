@@ -1,0 +1,17 @@
+# Use the official Python image from Docker Hub
+FROM python:3.8-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the Python script into the container
+COPY backend1.py .
+
+# Install Flask
+RUN pip install Flask
+
+# Expose the port that the backend server will run on
+EXPOSE 5000
+
+# Run the Python script
+CMD ["python", "backend1.py"]
