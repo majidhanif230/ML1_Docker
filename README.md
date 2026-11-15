@@ -1,109 +1,69 @@
-# Task1: File Cleanup and Python Processing
+# ML1 Docker
 
-## Overview
+Two ML1 bootcamp tasks: (1) automating file cleanup and text processing on Windows, and (2) running a small load-balanced Flask system in Docker.
 
-This setup involves automating two tasks on a Windows system using Git Bash and Task Scheduler:
+## Key features
 
-1. **File Cleanup**: The `file_cleanup.sh` script manages `.log` files by moving them to a designated directory and logging the action.
-2. **Python Processing**: The `file_processor.py` script reads a text file, counts the number of lines, and writes the count to another file.
+- **Task 1 — File cleanup & Python processing:** a Bash script moves `.log` files to an archive folder and logs the run; a Python script counts the lines in a text file — both scheduled to run daily with Windows Task Scheduler
+- **Task 2 — Docker load balancing:** two Flask backend services behind a round-robin load balancer, plus a requester service, all on one Docker network — runnable with a single `docker compose` command
 
-## `file_cleanup.sh` Script
+## Tech stack
 
-### What Happens When the Script Runs
+- Bash, Python
+- Docker, Docker Compose
+- Flask, `requests`
 
-1. **Directory Check and Creation**:
-   - **Old Files Directory**: Checks if the directory `/c/bash/task1/old_files` exists. If not, it creates this directory.
-   - **Log Directory**: Ensures the directory `/c/bash/task1/log` exists or creates it if necessary.
+## Task 1 — File cleanup and Python processing
 
-2. **File Movement**:
-   - Moves all `.log` files from `/c/bash/task1/temp/log` to `/c/bash/task1/old_files`. Errors are suppressed if no `.log` files are found.
+`task1/file_cleanup.sh` moves all `.log` files from `task1/temp/` to `task1/old_files/` (creating the folders if needed) and appends a timestamped entry to `task1/log/file_cleanup.log`.
 
-3. **Logging**:
-   - Records an entry in `/c/bash/task1/log/file_cleanup.log` with a timestamp indicating that files have been moved.
+`task1/file_processor.py` reads `input.txt`, counts its lines, and writes `Number of lines: <count>` to `output.txt`.
 
-### Automated Execution
+The original setup ran these on Windows with Git Bash and Task Scheduler — the shell script daily at 1:00 AM and the Python script daily at 2:00 AM. The script paths in the repo are Windows-style (`/c/bash/task1/...`); adjust them to your own folders before scheduling.
 
-- **Task Scheduler**: A task is configured to run the `file_cleanup.sh` script daily at 1:00 AM.
-  - The task uses `bash.exe` from Git Bash with the command:
+```bash
+# Run by hand
+bash task1/file_cleanup.sh
+python task1/file_processor.py
+```
 
-    -c "/C:\bash\task1/file_cleanup.sh"
-    
+## Task 2 — Docker load balancer
 
-## `file_processor.py` Script
+Two Flask backends (`backend1.py` on port 5000, `backend2.py` on port 5001) sit behind `load_balancer.py` (port 8080), which forwards each request to the next backend in turn (round-robin). `request.py` sends 10 requests to the load balancer and prints each response.
 
-### What Happens When the Script Runs
+```bash
+git clone https://github.com/majidhanif230/ML1_Docker.git
+cd ML1_Docker/task2
+docker compose up --build
+```
 
-1. **File Reading**:
-   - Reads the contents of `input.txt`.
+Then open http://localhost:8080 in a browser — each refresh should alternate between the two backends. The compose file defines the `my_network` bridge network and maps ports 5000, 5001 and 8080 to the host.
 
-2. **Line Counting**:
-   - Counts the number of lines in `input.txt`.
+## Project structure
 
-3. **File Writing**:
-   - Writes the line count to `output.txt`.
+```
+ML1_Docker/
+├── README.md
+├── task1/
+│   ├── file_cleanup.sh      # Move .log files to old_files/, log the run
+│   ├── file_processor.py    # Count lines in input.txt -> output.txt
+│   ├── input.txt / output.txt
+│   ├── hello.txt
+│   └── log/ / old_files/ / temp/
+└── task2/
+    ├── docker-compose.yml           # backend1, backend2, load_balancer, requester on my_network
+    ├── Dockerfile.backend1 / Dockerfile.backend2
+    ├── Dockerfile.load_balancer / Dockerfile.requester
+    ├── backend1.py / backend2.py    # Flask services
+    ├── load_balancer.py             # Round-robin proxy on port 8080
+    ├── request.py                   # Sends 10 requests to the load balancer
+    └── requirements.txt             # flask, requests
+```
 
-### Automated Execution
+## Author
 
-- **Task Scheduler**: A task is configured to run the `file_processor.py` script daily at 2:00 AM.
-  - The task uses `python.exe` to execute the script. If using a virtual environment, ensure it is activated.
+**Majid Hanif** — AI Engineer, BS Artificial Intelligence, The Islamia University of Bahawalpur (CGPA 3.81/4.0)
 
-## Result
-
-- **File Management**: `.log` files are moved to `/c/bash/task1/old_files` and logged in `/c/bash/task1/log/file_cleanup.log`.
-- **Python Processing**: The line count of `input.txt` is written to `output.txt`.
-- **Automated Execution**: 
-  - The shell script runs daily at 1:00 AM.
-  - The Python script runs daily at 2:00 AM, ensuring both tasks are performed automatically without manual intervention.
-
-
-# Task2: Docker Project:
-
-## Overview
-
-This Docker project sets up a containerized environment with multiple services including a load balancer, backend services, and a requester service. The project utilizes Docker to build and run these services in isolated containers, connected through a shared network.
-
-## Project Structure
-
-### Dockerfiles
-
-- **`Dockerfile.load_balancer`**: Defines the image for the load balancer service.
-- **`Dockerfile.backend1`**: Defines the image for backend service 1.
-- **`Dockerfile.backend2`**: Defines the image for backend service 2.
-- **`Dockerfile.requester`**: Defines the image for the requester service.
-
-### Python Files
-
-- **`backend1.py`**: Code for backend service 1.
-- **`backend2.py`**: Code for backend service 2.
-- **`load_balancer.py`**: Code for the load balancer service.
-- **`requester.py`**: Code for the requester service.
-
-### Docker Network
-
-- **Network Name**: `my_network`.
-
-## Build and Run Instructions
-
-1. **Create Docker Network**:
-   
-    docker network create my_network
-
-2. **Build Docker Images**:
-
-    docker build -t load_balancer -f Dockerfile.load_balancer .
-    docker build -t backend1 -f Dockerfile.backend1 .
-    docker build -t backend2 -f Dockerfile.backend2 .
-    docker build -t requester -f Dockerfile.requester .
-
-3. **Run Docker Containers**:
-
-    docker run -d --name backend1 --network my_network backend1
-    docker run -d --name backend2 --network my_network backend2
-    docker run -d --name load_balancer --network my_network load_balancer
-    docker run -d --name requester --network my_network requester
-
-## Project Workflow
-
-1. **Setup Network**: Create a Docker network named `my_network`.
-2. **Build Images**: Build Docker images for each service using the corresponding Dockerfiles.
-3. **Run Containers**: Launch the containers for each service, ensuring they are connected to the `my_network`.
+- Portfolio: https://snap-portfolio-me.lovable.app/portfolio
+- LinkedIn: https://www.linkedin.com/in/majid-hanif-23720b2a2/
+- GitHub: https://github.com/majidhanif230
